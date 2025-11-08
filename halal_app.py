@@ -4,15 +4,12 @@ import requests
 import os
 from PIL import Image
 import torch
-import pyzbar.pyzbar as pyzbar  # Barcode decoding
+import pyzbar.pyzbar as pyzbar
 
-# --- CONFIGURATION ---
 CSV_PATH = 'halal_data.csv'
 MODEL_PATH = 'mock_halal_logo_model.pt'
 HARAM_KEYWORDS = ["PORK", "GELATIN", "LARD", "ETHANOL", "COCHINEAL", "CARMINE", "ANIMAL FAT"]
 
-
-# --- UTILITY FUNCTION TO LOAD CSS ---
 def apply_custom_css(css_file):
     try:
         with open(css_file) as f:
@@ -21,8 +18,6 @@ def apply_custom_css(css_file):
     except FileNotFoundError:
         st.error(f"CSS file not found: {css_file}")
 
-
-# Load local E-Code database
 @st.cache_data
 def load_halal_data():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -55,8 +50,6 @@ def load_halal_data():
 
 HALAL_DB = load_halal_data()
 
-
-# --- CORE FUNCTIONS (kept short for brevity, assume they are the same) ---
 def get_halal_status(item, db):
     item = item.strip().upper()
     return db.get(item, ('UNKNOWN', 'Not found in local E-Code/Ingredient database.'))
@@ -67,20 +60,15 @@ def check_ecodes_online(term):
 
     st.markdown(f"**Lookup for {term}:**")
 
-    # Create the highly visible styled HTML text
     status_text = f'<div class="status-indicator status-{status.lower()}">Status: {status}</div>'
 
-    # Inject the highly visible, custom-styled status
     st.markdown(status_text, unsafe_allow_html=True)
 
     st.markdown("Details:")
-    # st.info is used here, and is styled prominently in styles.css
     st.info(details)
 
 
 def display_standardized_status(status_string):
-    """Helper to display standardized status like E-Code check."""
-    # Ensure status is upper-case and clean for CSS class naming
     status = status_string.upper().replace(' ', '_')
     status_text = f'<div class="status-indicator status-{status.lower()}">Status: {status_string}</div>'
     st.markdown(status_text, unsafe_allow_html=True)
@@ -105,7 +93,7 @@ def determine_overall_halal_status(haram_found, musbooh_found, has_halal_certifi
         display_standardized_status("MUSBOOH")
         st.warning(status_message)
     else:
-        # Changed "Likely HALAL" to "HALAL" as requested
+
         status_message = "HALAL"
         display_standardized_status(status_message)
 
@@ -208,29 +196,26 @@ def predict_logo(image, model):
     st.markdown("---")
 
     if label_found:
-        # Standardized Status Display for Halal Logo Recognition
+
         display_standardized_status("HALAL")
         st.success(f"**Halal Logo Detected!** Confidence: **{confidence:.2f}**")
-        # Removed st.balloons() here
+
     else:
-        # Standardized Status Display for No Halal Logo
+
         display_standardized_status("UNKNOWN")
         st.warning(f"**No Halal Logo Detected.** Confidence: {confidence:.2f}")
 
     return "Halal Logo Detected" if label_found else "No Halal Logo Detected", confidence
 
 
-# --- STREAMLIT UI ---
-st.set_page_config(page_title="Halal Scanner Pro", layout="wide")
 
-# Inject the custom CSS
+st.set_page_config(page_title="Halal Scanner Pro", layout="wide")
 apply_custom_css("styles.css")
 
 halal_logo_model = load_ml_model(MODEL_PATH)
 
 st.title(" Halal Food Identifier")
 
-# Use columns for a balanced layout
 col_main, col_sidebar = st.columns([4, 1])
 
 with col_main:
@@ -279,7 +264,7 @@ with col_main:
         st.header("3. Halal Logo Recognition")
         st.info("Upload an image of the product to check for a Halal Certification Logo .")
 
-        # New: Add method selection for Logo Recognition
+
         logo_method = st.radio("Select Input Method:", ["Upload Image", "Use Camera"],
                                key="logo_recognition_method")  # New key for this radio
 
@@ -294,7 +279,6 @@ with col_main:
                 with st.spinner('Analyzing captured image for Halal Logo...'):
                     label, conf = predict_logo(Image.open(img_camera_logo), halal_logo_model)
 
-# Sidebar for Status and Info
 with col_sidebar:
     st.metric(label="E-Code Database Size", value=f"{len(HALAL_DB)} entries", delta="Local Cache")
 
@@ -308,17 +292,17 @@ with col_sidebar:
         st.markdown(
             "* Scrapes ingredients and compares them to the local E-Code DB and built-in **Haram Keywords** (Pork, Alcohol, etc.).")
 
-    with st.expander("Halal Logo Recognition Details"):  # Added details for the new feature
+    with st.expander("Halal Logo Recognition Details"):
         st.markdown("* Uses a **trained model** to detect Halal certification logos.")
         st.markdown("* Provides status: **HALAL** (if logo detected) or **UNKNOWN** (if no logo detected).")
 
     st.markdown("---")
     with col_sidebar:
-        # ... other sidebar content
+
 
         st.markdown("---")
         st.markdown(
-            "**Developed by:** <br>"  # Bolds the header and adds a line break
+            "**Developed by:** <br>"  
             "Muhammad Faseeh Ali <br>"
             "Muhammad Ahsan <br>"
             "Faizan Majeed",
