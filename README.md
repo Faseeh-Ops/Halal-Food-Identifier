@@ -27,6 +27,10 @@ Halal Logo Recognition
 Uses a camera or image upload to check for the presence of Halal certification logos via a mock Machine Learning model.
 
 Standardizes status output to HALAL (if detected) or UNKNOWN (if not detected).
+<img width="3840" height="1650" alt="image" src="https://github.com/user-attachments/assets/91e3c6c3-ef21-4719-a51b-839fea03ff4e" />
+<img width="3840" height="1656" alt="image" src="https://github.com/user-attachments/assets/f2f341dc-93fc-48ec-a72d-731026526d82" />
+<img width="3840" height="1647" alt="image" src="https://github.com/user-attachments/assets/c0f6deef-a622-4000-b5fa-c2e8557b64f9" />
+
 
 Tech Stack
 
@@ -44,11 +48,10 @@ Follow these steps to get the application running on your local machine.
 
 Clone the Repository
 
-git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+git clone [https://github.com/your-username/your-repository-name.git](https://github.com/Faseeh-Ops/Halal-Food-Identifier)
 cd your-repository-name
 
 
-(Please replace your-username/your-repository-name.git with your actual GitHub URL)
 
 Create and Activate a Virtual Environment
 
@@ -108,6 +111,8 @@ mock_halal_logo_model.pt: The mock model file for logo recognition.
 requirements.txt: Lists all the Python libraries required to run the project.
 
 packages.txt: Specifies the necessary Linux system dependency (libzbar0).
+<img width="1128" height="504" alt="image" src="https://github.com/user-attachments/assets/f7aeef36-b026-49da-8f8c-0de220826b39" />
+
 
 How to Upload Your Project to GitHub from PyCharm
 
@@ -141,3 +146,4 @@ Go to VCS (Version Control System) menu at the top.
 Select Import into Version Control -> Share Project on GitHub.
 
 Follow the prompts to name your repository and push the project.
+
