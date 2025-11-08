@@ -45,10 +45,10 @@ div.stButton > button:hover {
     border-color: #FFB74D;
 }
 
-/* 7. Prominent Details Section Styling (Targets st.info alerts) */
+
 [data-testid="stAlert"].info {
     border: 3px solid #007bff;
-    background-color: #f0f8ff;
+    background-color: black;
     color: #004085;
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
@@ -73,7 +73,6 @@ div.stButton > button:hover {
     border-right: 3px solid #4CAF50;
 }
 
-/* 8. Clear Status Indicator Styling (for Halal Status) */
 .status-indicator {
     font-size: 1.5em;
     font-weight: 900;
