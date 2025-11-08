@@ -84,7 +84,7 @@ The application should automatically open in a new tab in your web browser!
 
 Deployment
 
-Deployed successfully on Streamlit (Replace with your actual working URL):
+Deployed successfully on Streamlit:
 https://halal-food-identifier.streamlit.app/
 
 Configuration Files Required
