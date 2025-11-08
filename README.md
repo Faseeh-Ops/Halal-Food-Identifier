@@ -1,12 +1,12 @@
-Halal Food Identifier
+Halal Food Identifier 
 
-Overview:
+Overview
 
 The Halal Food Identifier is a dedicated Streamlit application designed to help users quickly and reliably check the Islamic dietary status of food products. It combines local data analysis with external APIs to provide clear, standardized results across multiple input methods.
 
 This project is deployed and runs publicly on the Streamlit platform.
 
-Key Features:
+Key Features
 
 The application is organized into three main functional tabs:
 
@@ -28,68 +28,116 @@ Uses a camera or image upload to check for the presence of Halal certification l
 
 Standardizes status output to HALAL (if detected) or UNKNOWN (if not detected).
 
-Tech Stack & Dependencies:
+Tech Stack
 
 Framework: Streamlit
 
 Language: Python
 
-APIs: Open Food Facts
+Styling: Custom CSS injected into Streamlit
 
 Libraries: streamlit, pandas, requests, pillow, torch (for mock ML), pyzbar (for barcode decoding)
 
-Local Installation and Setup:
+How to Run Locally
 
-To run this application on your local machine, follow these steps:
+Follow these steps to get the application running on your local machine.
 
-1. Prerequisites
+Clone the Repository
 
-You need Python (3.8+) installed. Ensure you have the following data/config files in your root directory:
-
-halal_data.csv (The E-code database)
-
-mock_halal_logo_model.pt (The CV model trained on halal logos)
-
-styles.css (The custom CSS file)
-
-2. Setup Virtual Environment
-
-python -m venv .venv
-source .venv/bin/activate  # On macOS/Linux/Git Bash
-.venv\Scripts\activate      # On Windows CMD/PowerShell
+git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+cd your-repository-name
 
 
-3. Install Python Dependencies
+(Please replace your-username/your-repository-name.git with your actual GitHub URL)
 
-Create a requirements.txt file (if you don't have one) and install the packages:
+Create and Activate a Virtual Environment
 
-pip install streamlit pandas requests pillow torch pyzbar
+It's recommended to use a virtual environment to manage dependencies.
+
+For Windows:
+
+python -m venv venv 
+.\venv\Scripts\activate
 
 
-4. Running the Application
+For macOS/Linux:
+
+python3 -m venv venv 
+source venv/bin/activate
+
+
+Install Dependencies
+
+Install all the required libraries from the requirements.txt file.
+
+pip install -r requirements.txt
+
+
+Run the Streamlit App
+
+Execute the following command in your terminal.
 
 streamlit run halal_app.py
 
 
-Deployment on Streamlit Cloud
+The application should automatically open in a new tab in your web browser!
 
-The application is deployed to Streamlit Cloud, which requires two additional configuration files to run correctly due to the use of pyzbar.
+Deployment
+
+Deployed successfully on Streamlit (Replace with your actual working URL):
+https://halal-food-identifier.streamlit.app/
 
 Configuration Files Required
 
-requirements.txt: Lists the Python libraries (already covered).
+requirements.txt: Lists the Python libraries.
 
-packages.txt: CRITICAL for installing the native ZBar dependency required by pyzbar on the Linux host environment.
+packages.txt: CRITICAL for installing the native ZBar dependency (libzbar0) required by pyzbar on the Linux host environment.
 
-File Content (packages.txt):
+File Structure
 
-libzbar0
+The project is organized into the following key files:
+
+halal_app.py: The main application file. It handles the page layout, user inputs, and scanning logic.
+
+styles.css: Contains the custom CSS for the enhanced and color-coded UI.
+
+halal_data.csv: The local E-code and ingredient database used for lookups.
+
+mock_halal_logo_model.pt: The mock model file for logo recognition.
+
+requirements.txt: Lists all the Python libraries required to run the project.
+
+packages.txt: Specifies the necessary Linux system dependency (libzbar0).
+
+How to Upload Your Project to GitHub from PyCharm
+
+This is a detailed, step-by-step guide if you are using the PyCharm IDE.
+
+Step 1: Get Your Project Ready
+
+Create .gitignore: This is a very important step to prevent uploading unnecessary files (like your virtual environment).
+
+In the PyCharm project panel, right-click your main folder -> New -> File.
+Name the file .gitignore (the dot at the beginning is crucial).
+
+Paste the following content into it:
+
+# Virtual Environment
+venv/
+.venv/
+
+# PyCharm files
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc
 
 
-Developed by:
+Step 2: Push to GitHub
 
-Muhammad Faseeh Ali
+Go to VCS (Version Control System) menu at the top.
 
-Muhammad Ahsan
+Select Import into Version Control -> Share Project on GitHub.
 
-Faizan Majeed
+Follow the prompts to name your repository and push the project.
