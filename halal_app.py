@@ -5,10 +5,12 @@ import os
 from PIL import Image
 import torch
 import pyzbar.pyzbar as pyzbar
+import random  # Keep random for the simulation of label detection confidence
 
 CSV_PATH = 'halal_data.csv'
 MODEL_PATH = 'mock_halal_logo_model.pt'
 HARAM_KEYWORDS = ["PORK", "GELATIN", "LARD", "ETHANOL", "COCHINEAL", "CARMINE", "ANIMAL FAT"]
+
 
 def apply_custom_css(css_file):
     try:
@@ -17,6 +19,7 @@ def apply_custom_css(css_file):
         st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
     except FileNotFoundError:
         st.error(f"CSS file not found: {css_file}")
+
 
 @st.cache_data
 def load_halal_data():
@@ -49,6 +52,7 @@ def load_halal_data():
 
 
 HALAL_DB = load_halal_data()
+
 
 def get_halal_status(item, db):
     item = item.strip().upper()
@@ -180,6 +184,7 @@ def load_ml_model(path):
     class MockHalalClassifier(torch.nn.Module):
         def __init__(self):
             super().__init__()
+            # Your mock model expects a 10-dimensional input and outputs 2 classes (e.g., [No Halal, Halal])
             self.layer = torch.nn.Linear(10, 2)
 
         def forward(self, x): return self.layer(x)
@@ -187,26 +192,60 @@ def load_ml_model(path):
     return MockHalalClassifier()
 
 
+# --- START OF MODIFIED FUNCTION ---
 def predict_logo(image, model):
     st.image(image, width=250)
-    import random
-    label_found = random.random() < 0.7
-    confidence = random.uniform(0.55, 0.99)
-
     st.markdown("---")
 
-    if label_found:
+    # --- MOCK MODEL INFERENCE START ---
 
+    # 1. Simulate Image Preprocessing: Create a mock input tensor (size 10)
+    # This simulates converting an image into the numerical format your model expects.
+    mock_input = torch.rand(1, 10)
+
+    # 2. Pass to the Mock Model
+    # We use torch.no_grad() because we are only running inference, not training.
+    try:
+        with torch.no_grad():
+            output = model(mock_input)
+
+        # 3. Interpret Output
+        # Apply softmax to get probabilities across the 2 output classes
+        probabilities = torch.softmax(output, dim=1)
+        # Get the confidence and the index of the class with the highest probability
+        confidence, predicted_class = torch.max(probabilities, 1)
+
+        # Convert to standard Python types
+        confidence = confidence.item()
+
+        # We assume class 1 is "Halal Logo Detected"
+        is_halal_detected = predicted_class.item() == 1
+
+        # Use a confidence threshold to finalize the decision
+        # The result will be semi-random due to random mock_input and un-trained model weights
+        label_found = is_halal_detected and confidence > 0.55
+
+    except Exception as e:
+        st.error(f"Mock Model Inference Failed: {e}")
+        label_found = False
+        confidence = 0.0
+
+    # --- MOCK MODEL INFERENCE END ---
+
+    if label_found:
         display_standardized_status("HALAL")
         st.success(f"**Halal Logo Detected!** Confidence: **{confidence:.2f}**")
-
+        result_label = "Halal Logo Detected"
     else:
-
         display_standardized_status("UNKNOWN")
+        # Display the confidence of the dominant class, even if it's 'No Halal'
         st.warning(f"**No Halal Logo Detected.** Confidence: {confidence:.2f}")
+        result_label = "No Halal Logo Detected"
 
-    return "Halal Logo Detected" if label_found else "No Halal Logo Detected", confidence
+    return result_label, confidence
 
+
+# --- END OF MODIFIED FUNCTION ---
 
 
 st.set_page_config(page_title="Halal Scanner Pro", layout="wide")
@@ -264,7 +303,6 @@ with col_main:
         st.header("3. Halal Logo Recognition")
         st.info("Upload an image of the product to check for a Halal Certification Logo .")
 
-
         logo_method = st.radio("Select Input Method:", ["Upload Image", "Use Camera"],
                                key="logo_recognition_method")  # New key for this radio
 
@@ -298,11 +336,9 @@ with col_sidebar:
 
     st.markdown("---")
     with col_sidebar:
-
-
         st.markdown("---")
         st.markdown(
-            "**Developed by:** <br>"  
+            "**Developed by:** <br>"
             "Muhammad Faseeh Ali <br>"
             "Muhammad Ahsan <br>"
             "Faizan Majeed",
