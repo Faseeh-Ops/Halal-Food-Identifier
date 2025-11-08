@@ -1,4 +1,4 @@
-Halal Food Identifier 
+##Halal Food Identifier 
 
 Overview
 
