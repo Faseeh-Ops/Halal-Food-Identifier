@@ -1,5 +1,5 @@
 .stApp {
-    background: linear-gradient(135deg, gray,  #4CAF50, #d9ead3);
+    background: linear-gradient(135deg, gray, #4CAF50, #d9ead3);
     color: #333;
     animation: fadeIn 1s ease-in-out;
 }
@@ -22,7 +22,7 @@ div.stButton > button {
 div.stButton > button:hover {
     background-color: #66BB6A;
     transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .stTextInput > div > div > input {
@@ -49,7 +49,7 @@ div.stButton > button:hover {
 [data-testid="stAlert"].info {
     border: 3px solid #007bff;
     background-color: black;
-    color: #004085;
+    color: white;
     font-weight: 500;
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
     padding: 15px;
@@ -112,4 +112,88 @@ div.stButton > button:hover {
 @keyframes fadeIn {
     0% {opacity: 0;}
     100% {opacity: 1;}
+}
+
+/* --- Sidebar Popover Styling (White Button, Black Hover - REVERTED) --- */
+
+/* Style the wrapper to center the button above the "How It Works" section */
+.sidebar-popover-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 30px 0;
+}
+
+/* Target the popover button and style it as a wide white bar */
+.sidebar-popover-wrapper [data-testid="stPopover"] > button {
+    background-color: white !important; /* KEY: Default is WHITE */
+    color: black !important; /* KEY: Default text/emoji color is BLACK */
+    border-radius: 8px !important;
+    width: 90%;
+    height: auto;
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease-in-out;
+    padding: 10px 15px;
+    line-height: 1.5;
+    border: 1px solid #333; /* Added border for white visibility */
+}
+
+/* Ensure the button text is visible */
+.sidebar-popover-wrapper [data-testid="stPopover"] > button span {
+    font-size: 1em;
+}
+
+/* Remove the custom ::after emoji */
+.sidebar-popover-wrapper [data-testid="stPopover"] > button::after {
+    content: none !important;
+}
+
+.sidebar-popover-wrapper [data-testid="stPopover"] > button:hover {
+    background-color: black !important; /* KEY: Hover is BLACK */
+    color: white !important; /* KEY: Text/emoji turns WHITE on hover */
+    transform: scale(1.01);
+}
+
+/* --- Popover Dialog Content (The box that opens) --- */
+
+/* Change text color inside the popover dialog box to white and give it a darker background */
+[data-testid="stPopoverContent"] {
+    color: white; /* Default text color inside the popover is WHITE */
+    background-color: #333;
+    min-width: 300px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+/* Ensure the heading text is white */
+[data-testid="stPopoverContent"] h3 {
+    color: white !important;
+}
+
+
+/* Style for chat messages within the popover (keeping chat bubbles light for readability) */
+[data-testid="stChatMessage"] {
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+
+[data-testid="stChatMessage"]:has(.st-emotion-cache-1c7c9f5.e1gz06555) {
+    background-color: #d1e7d5;
+    color: #333;
+    align-self: flex-end;
+    margin-left: 20%;
+}
+
+
+[data-testid="stChatMessage"]:has(.st-emotion-cache-1c7c9f5.e1gz06554) {
+    background-color: #f0fff0;
+    color: #333;
+    align-self: flex-start;
+    margin-right: 20%;
+    border: 1px solid #4CAF50;
 }
