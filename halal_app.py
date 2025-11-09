@@ -6,7 +6,6 @@ from PIL import Image
 import torch
 import pyzbar.pyzbar as pyzbar
 
-
 CSV_PATH = 'halal_data.csv'
 MODEL_PATH = 'mock_halal_logo_model.pt'
 HARAM_KEYWORDS = ["PORK", "GELATIN", "LARD", "ETHANOL", "COCHINEAL", "CARMINE", "ANIMAL FAT"]
@@ -57,6 +56,70 @@ HALAL_DB = load_halal_data()
 def get_halal_status(item, db):
     item = item.strip().upper()
     return db.get(item, ('UNKNOWN', 'Not found in local E-Code/Ingredient database.'))
+
+
+# --- Chatbot Functions ---
+def handle_chat_query(query, db):
+    """Rule-based chatbot for Halal status lookup and app guidance."""
+    query = query.strip().upper()
+
+    # --- Priority 1: App Guidance Keywords ---
+    if "HOW" in query and "WORK" in query or "APP" in query and "FUNCTION" in query:
+        response = (
+            "This app has three main functions:\n\n"
+            "1. **E-Code / Ingredient Check (Tab 1):** Directly checks ingredients/E-codes against our local database for HALAL, HARAM, or MUSBOOH status.\n"
+            "2. **Barcode Lookup/Scan (Tab 2):** Scans a barcode or takes manual input, fetches product details from Open Food Facts, and analyzes the ingredients.\n"
+            "3. **Halal Logo Recognition (Tab 3):** Uses a machine learning model to detect Halal certification logos in product images."
+        )
+        return response, "INFO"
+
+    if "BARCODE" in query or "SCAN" in query or "PRODUCT" in query:
+        response = (
+            "To check a product via its barcode, please go to **Tab 2: Barcode Lookup/Scan**. "
+            "You can either enter the number manually, upload an image of the barcode, or use your camera."
+        )
+        return response, "INFO"
+
+    if "LOGO" in query or "CERTIFICATION" in query or "RECOGNIZE" in query:
+        response = (
+            "To check for a Halal Certification Logo, please navigate to **Tab 3: Halal Logo Recognition**. "
+            "You can upload a product image or use your camera, and our model will analyze it for a certification logo."
+        )
+        return response, "INFO"
+
+    if "E-CODE" in query or "INGREDIENT" in query or "E CODE" in query:
+        response = (
+            "To quickly check the status of a specific ingredient or E-code, please use **Tab 1: E-Code / Ingredient Check**. "
+            "Type the code (e.g., E120) or the ingredient name into the input box."
+        )
+        return response, "INFO"
+
+    # --- Priority 2: Direct Halal Status Check (Uses existing database logic) ---
+
+    status, details = get_halal_status(query, db)
+    if status != 'UNKNOWN':
+        response = f"The status for **{query}** is **{status}**."
+        response += f"\n\n**Details:** {details}"
+        return response, status
+
+    # --- Priority 3: General Keywords ---
+
+    if "HARAM" in query or "FORBIDDEN" in query:
+        return "I can help you check if an ingredient is Haram. Please enter the ingredient name or E-code (Tab 1 is best for this).", "INFO"
+    elif "HALAL" in query or "PERMISSIBLE" in query:
+        return "I can help you check if an ingredient is Halal. Please enter the ingredient name or E-code (Tab 1 is best for this).", "INFO"
+    elif "MUSBOOH" in query or "DOUBTFUL" in query:
+        return "Musbooh means 'Doubtful' or 'Suspect'. It indicates an ingredient whose status is not clearly Halal or Haram. You should investigate further or avoid it.", "MUSBOOH"
+    elif "HI" in query or "HELLO" in query:
+        return "Hello! I'm your Halal Assistant. Ask me how the app works, or ask about an ingredient, E-code, barcode scan, or logo check!", "INFO"
+    elif "THANK" in query:
+        return "You're welcome! Feel free to ask another question or close this chat and use the main tabs.", "INFO"
+
+    # --- Default Fallback ---
+    return f"I couldn't find a direct match or guidance for **{query}**. Please ask about an E-code, ingredient, barcode, logo recognition, or how the app works!", "UNKNOWN"
+
+
+# --- End Chatbot Functions ---
 
 
 def check_ecodes_online(term):
@@ -196,25 +259,19 @@ def predict_logo(image, model):
     st.image(image, width=250)
     st.markdown("---")
 
-
     mock_input = torch.rand(1, 10)
-
 
     try:
         with torch.no_grad():
             output = model(mock_input)
 
-
         probabilities = torch.softmax(output, dim=1)
 
         confidence, predicted_class = torch.max(probabilities, 1)
 
-
         confidence = confidence.item()
 
-
         is_halal_detected = predicted_class.item() == 1
-
 
         label_found = is_halal_detected and confidence > 0.55
 
@@ -222,8 +279,6 @@ def predict_logo(image, model):
         st.error(f"Mock Model Inference Failed: {e}")
         label_found = False
         confidence = 0.0
-
-
 
     if label_found:
         display_standardized_status("HALAL")
@@ -238,8 +293,6 @@ def predict_logo(image, model):
     return result_label, confidence
 
 
-
-
 st.set_page_config(page_title="Halal Scanner Pro", layout="wide")
 apply_custom_css("styles.css")
 
@@ -250,6 +303,7 @@ st.title(" Halal Food Identifier")
 col_main, col_sidebar = st.columns([4, 1])
 
 with col_main:
+    # Main content tabs
     tab1, tab2, tab3 = st.tabs([" E-Code / Ingredient Check", " Barcode Lookup/Scan", " Halal Logo Recognition"])
 
     with tab1:
@@ -268,7 +322,7 @@ with col_main:
         st.header("2. Barcode Lookup/Scan")
 
         method = st.radio("Select Scan Method:", ["Enter Barcode Manually", "Use Camera", "Upload Image"],
-                          key="barcode_scan_method")  # Changed key for uniqueness
+                          key="barcode_scan_method")
 
         if method == "Enter Barcode Manually":
             barcode_input = st.text_input("Enter Barcode (8/12/13 digits):", key="barcode_input")
@@ -280,7 +334,7 @@ with col_main:
                     st.error("Invalid barcode format. Must be 8, 12, or 13 digits.")
 
         elif method == "Use Camera":
-            img = st.camera_input("Scan Barcode from Camera ", key="camera_barcode_input")  # Changed key
+            img = st.camera_input("Scan Barcode from Camera ", key="camera_barcode_input")
             if img:
                 with st.spinner('Decoding barcode...'):
                     scan_barcode_from_camera(Image.open(img))
@@ -311,6 +365,39 @@ with col_main:
 
 with col_sidebar:
     st.metric(label="E-Code Database Size", value=f"{len(HALAL_DB)} entries", delta="Local Cache")
+
+    # --- CHATBOT POPOVER PLACED HERE ---
+    st.markdown('<div class="sidebar-popover-wrapper">', unsafe_allow_html=True)
+    floating_chat_button = st.popover("💬 Halal Assistant", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    with floating_chat_button:
+        st.markdown("### AI Assistant")
+        # st.info(...) line removed as requested
+
+        # Initialize chat history, unique key ensures it only runs once per session
+        if "floating_messages" not in st.session_state:
+            st.session_state["floating_messages"] = [{"role": "assistant",
+                                                      "content": "Hello! I'm your Halal Assistant. Ask me how the app works, or ask about an ingredient or scanning feature!"}]
+
+        # Display chat messages from history
+        for msg in st.session_state.floating_messages:
+            st.chat_message(msg["role"]).write(msg["content"])
+
+        # Handle user input (key is important for popover inputs)
+        if prompt := st.chat_input("Ask a question...", key="floating_chat_input"):
+            # Add user message to chat history
+            st.session_state.floating_messages.append({"role": "user", "content": prompt})
+            st.chat_message("user").write(prompt)
+
+            # Get assistant response
+            with st.spinner("Checking..."):
+                response_text, response_status = handle_chat_query(prompt, HALAL_DB)
+
+            # Display and add assistant response to chat history
+            st.chat_message("assistant").write(response_text)
+            st.session_state.floating_messages.append({"role": "assistant", "content": response_text})
+    # --- END CHATBOT POPOVER ---
 
     st.subheader("How It Works")
     with st.expander("E-Code Check Details"):
