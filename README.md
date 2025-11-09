@@ -27,9 +27,12 @@ Halal Logo Recognition
 Uses a camera or image upload to check for the presence of Halal certification logos via a mock Machine Learning model.
 
 Standardizes status output to HALAL (if detected) or UNKNOWN (if not detected).
-<img width="3840" height="1650" alt="image" src="https://github.com/user-attachments/assets/91e3c6c3-ef21-4719-a51b-839fea03ff4e" />
-<img width="3840" height="1656" alt="image" src="https://github.com/user-attachments/assets/f2f341dc-93fc-48ec-a72d-731026526d82" />
-<img width="3840" height="1647" alt="image" src="https://github.com/user-attachments/assets/c0f6deef-a622-4000-b5fa-c2e8557b64f9" />
+<img width="3834" height="1656" alt="image" src="https://github.com/user-attachments/assets/47f14076-c5d4-45ec-9fe0-4bc77c89a166" />
+
+<img width="3840" height="1464" alt="image" src="https://github.com/user-attachments/assets/fc346cb6-5b71-4fb1-a539-c8d3bce5fc8c" />
+
+<img width="3840" height="1467" alt="image" src="https://github.com/user-attachments/assets/1ddb3c48-af93-4b8b-9872-3bcecb0e0d41" />
+
 
 
 Tech Stack
